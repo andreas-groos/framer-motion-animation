@@ -18,12 +18,16 @@ const Home: NextPage = () => {
           cx={el.cx}
           cy={el.cy}
           r={el.r}
+          strokeWidth={0}
           fill="teal"
           animate={{
             cx: 100,
+            r: 50,
+            strokeWidth: 10,
+            stroke: "red",
           }}
           transition={{
-            duration: 0.4,
+            duration: 0.8,
           }}
         />
       </svg>
