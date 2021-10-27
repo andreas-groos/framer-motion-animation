@@ -11,21 +11,34 @@ type El = {
 
 const Home: NextPage = () => {
   const [el, setEl] = useState<El>({ cx: 200, cy: 200, r: 100 });
+  const [clicked, setClicked] = useState(false);
+
+  const variants = {
+    initial: {
+      cx: el.cx,
+      cy: el.cy,
+      r: el.r,
+      fill: "teal",
+      strokeWidth: 0,
+    },
+    final: {
+      cx: 70,
+      cy: 70,
+      r: 70,
+      strokeWidth: 2,
+      stroke: "red",
+    },
+  };
+
   return (
     <div id="app">
       <svg>
         <motion.circle
-          cx={el.cx}
-          cy={el.cy}
-          r={el.r}
-          strokeWidth={0}
+          onClick={() => setClicked(!clicked)}
           fill="teal"
-          animate={{
-            cx: 100,
-            r: 50,
-            strokeWidth: 10,
-            stroke: "red",
-          }}
+          initial="initial"
+          animate={clicked ? "final" : "initial"}
+          variants={variants}
           transition={{
             duration: 0.8,
           }}
