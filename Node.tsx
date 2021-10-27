@@ -3,10 +3,6 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 import { NodeType } from "./pages/index";
 
 interface Props extends NodeType {
-  // x: number;
-  // y: number;
-  // r: number;
-  // w: number;
   moveNodes: () => void;
 }
 
@@ -41,7 +37,7 @@ export default function Node({
     width.set(strokeWidth);
   }, [cr, cy, cx, width, strokeWidth, x, y, r]);
 
-  console.log("rendering");
+  console.log("rendering Node");
   return (
     <motion.circle
       onClick={() => {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import Node from "../Node";
+import Edge from "../Edge";
 
 export interface NodeType {
   x: number;
@@ -13,11 +14,8 @@ export interface NodeType {
 }
 
 export interface EdgeType {
-  x1: number;
-  x2: number;
-  y1: number;
-  y2: number;
-  stroke?: number;
+  source: NodeType;
+  target: NodeType;
 }
 
 const amount = 6;
@@ -47,11 +45,23 @@ const createNodes = () => {
   }
   return temp;
 };
+
+const createEdges = (nodes: NodeType[]) => {
+  const temp: EdgeType[] = [];
+  nodes.forEach((n, i) => {
+    temp.push({ source: n, target: nodes[(i + 2) % 6] }); // connect every Node with the 2nd node after for demo purposes
+  });
+  return temp;
+};
+
+const calculatedNodes = createNodes();
+const calculatedEdges = createEdges(calculatedNodes);
+
 const Home: NextPage = () => {
-  const [nodes, setNodes] = useState<NodeType[]>(createNodes());
+  const [nodes, setNodes] = useState<NodeType[]>(calculatedNodes);
+  const [edges, setEdges] = useState<EdgeType[]>(calculatedEdges);
 
   const moveNodes = () => {
-    console.log("moving");
     let temp: NodeType[] = [];
     for (let index = 0; index < amount; index++) {
       const { x, y } = calculatePointOnOrbit(30 * index, 400, 40);
@@ -63,11 +73,15 @@ const Home: NextPage = () => {
       });
     }
     setNodes(temp);
+    setEdges(createEdges(temp));
   };
 
   return (
     <div id="app">
       <svg>
+        {edges.map((e, i) => {
+          return <Edge key={i} {...e} />;
+        })}
         {nodes.map((n, i) => (
           <Node key={i} {...n} moveNodes={moveNodes} />
         ))}
