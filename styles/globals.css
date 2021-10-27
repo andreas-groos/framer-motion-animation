@@ -14,3 +14,12 @@ a {
 * {
   box-sizing: border-box;
 }
+
+#app {
+  height: 100vh;
+  background: grey;
+}
+svg {
+  width: 100vw;
+  height: 100vw;
+}
