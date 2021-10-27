@@ -12,14 +12,37 @@ export interface NodeType {
   strokeWidth?: number;
 }
 
+export interface EdgeType {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  stroke?: number;
+}
+
+const amount = 6;
+function calculatePointOnOrbit(
+  angle: number,
+  distance: number,
+  offset: number
+): { x: number; y: number } {
+  const x =
+    Math.round(Math.cos(((angle + offset) * Math.PI) / 180) * distance) + 500;
+  const y =
+    Math.round(Math.sin(((angle + offset) * Math.PI) / 180) * distance) + 400;
+
+  return { x, y };
+}
+
 const createNodes = () => {
-  const amount = 6;
   const temp: NodeType[] = [];
   for (let index = 0; index < amount; index++) {
+    const { x, y } = calculatePointOnOrbit(60 * index, 250, 0);
     temp.push({
-      x: Math.random() * 1000,
-      y: Math.random() * 600,
-      r: Math.random() * 50 + 30,
+      x,
+      y,
+      r: 50,
+      strokeWidth: 0,
     });
   }
   return temp;
@@ -29,7 +52,17 @@ const Home: NextPage = () => {
 
   const moveNodes = () => {
     console.log("moving");
-    setNodes(createNodes());
+    let temp: NodeType[] = [];
+    for (let index = 0; index < amount; index++) {
+      const { x, y } = calculatePointOnOrbit(30 * index, 400, 40);
+      temp.push({
+        x,
+        y,
+        r: 80,
+        strokeWidth: 4,
+      });
+    }
+    setNodes(temp);
   };
 
   return (

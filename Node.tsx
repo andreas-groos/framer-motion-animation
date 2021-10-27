@@ -2,30 +2,44 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { NodeType } from "./pages/index";
 
-interface Props {
-  x: number;
-  y: number;
-  r: number;
+interface Props extends NodeType {
+  // x: number;
+  // y: number;
+  // r: number;
+  // w: number;
   moveNodes: () => void;
 }
 
-export default function Node({ x, y, r, moveNodes }: Props): ReactElement {
+export default function Node({
+  x,
+  y,
+  r,
+  strokeWidth,
+  moveNodes,
+}: Props): ReactElement {
   const cx = useMotionValue(x);
-  const sx = useSpring(cx);
+  const sx = useSpring(cx, {
+    duration: 2000,
+  });
   const cy = useMotionValue(y);
-  const sy = useSpring(cy);
+  const sy = useSpring(cy, {
+    duration: 2000,
+  });
   const cr = useMotionValue(r);
-  const sr = useSpring(r);
-  const width = useMotionValue(0);
-  const sWidth = useSpring(width);
+  const sr = useSpring(cr, {
+    duration: 3500,
+  });
+  const width = useMotionValue(strokeWidth);
+  const sWidth = useSpring(width, {
+    duration: 5000,
+  });
 
   useEffect(() => {
-    // console.log("EFFECT");
     cx.set(x);
     cy.set(y);
     cr.set(r);
-    width.set(Math.random() * 5);
-  }, [cr, cy, cx, width, x, y, r]);
+    width.set(strokeWidth);
+  }, [cr, cy, cx, width, strokeWidth, x, y, r]);
 
   console.log("rendering");
   return (
@@ -39,9 +53,6 @@ export default function Node({ x, y, r, moveNodes }: Props): ReactElement {
       r={sr}
       strokeWidth={sWidth}
       stroke="red"
-      transition={{
-        duration: 0.8,
-      }}
     />
   );
 }
