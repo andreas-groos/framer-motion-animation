@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import Head from "next/head";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 type El = {
   cx: number;
@@ -11,6 +11,9 @@ type El = {
 
 const Home: NextPage = () => {
   const [el, setEl] = useState<El>({ cx: 200, cy: 200, r: 100 });
+  const cx = useMotionValue(100);
+  const sx = useSpring(cx);
+
   const [clicked, setClicked] = useState(false);
 
   const variants = {
@@ -34,11 +37,13 @@ const Home: NextPage = () => {
     <div id="app">
       <svg>
         <motion.circle
-          onClick={() => setClicked(!clicked)}
+          onClick={() => {
+            cx.set(cx.get() + 100);
+          }}
           fill="teal"
-          initial="initial"
-          animate={clicked ? "final" : "initial"}
-          variants={variants}
+          cx={sx}
+          cy={el.cy}
+          r={el.r}
           transition={{
             duration: 0.8,
           }}
