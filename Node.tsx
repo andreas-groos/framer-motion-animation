@@ -1,21 +1,15 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { NodeType } from "./pages/index";
 
 interface Props {
   x: number;
   y: number;
   r: number;
+  moveNodes: () => void;
 }
 
-interface NodeType {
-  cx: number;
-  cy: number;
-  r: number;
-  stroke?: string;
-  strokeWidth?: number;
-}
-
-export default function Node({ x, y, r }: Props): ReactElement {
+export default function Node({ x, y, r, moveNodes }: Props): ReactElement {
   const cx = useMotionValue(x);
   const sx = useSpring(cx);
   const cy = useMotionValue(y);
@@ -25,15 +19,19 @@ export default function Node({ x, y, r }: Props): ReactElement {
   const width = useMotionValue(0);
   const sWidth = useSpring(width);
 
-  console.log("cx", cx);
-  console.log("sx", sx);
+  useEffect(() => {
+    // console.log("EFFECT");
+    cx.set(x);
+    cy.set(y);
+    cr.set(r);
+    width.set(Math.random() * 5);
+  }, [cr, cy, cx, width, x, y, r]);
+
+  console.log("rendering");
   return (
     <motion.circle
       onClick={() => {
-        cx.set(cx.get() + 100);
-        cy.set(cx.get() + 200);
-        cr.set(cr.get() + Math.random() * 10 + 10);
-        width.set(20);
+        moveNodes();
       }}
       fill="teal"
       cx={sx}
