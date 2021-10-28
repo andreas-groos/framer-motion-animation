@@ -1,9 +1,11 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import Head from "next/head";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import Node from "../Node";
 import Edge from "../Edge";
+import Orbit from "../Orbit";
+import useResizeObserver from "../useResizeObserver";
 
 export interface NodeType {
   x: number;
@@ -11,6 +13,7 @@ export interface NodeType {
   r: number;
   stroke?: string;
   strokeWidth?: number;
+  orbit: number;
 }
 
 export interface EdgeType {
@@ -18,29 +21,84 @@ export interface EdgeType {
   target: NodeType;
 }
 
-const amount = 6;
+export interface OrbitType {
+  orbit: number;
+  r: number;
+  centerX: number;
+  centerY: number;
+  width?: number;
+}
+
+const nodesOuter = 6;
+const nodesMiddle = 6;
+const nodesCenter = 6;
+const orbitRadii = [0.4, 0.6, 0.8, 1];
+
 function calculatePointOnOrbit(
   angle: number,
   distance: number,
-  offset: number
+  offset: number,
+  centerX: number,
+  centerY: number
 ): { x: number; y: number } {
   const x =
-    Math.round(Math.cos(((angle + offset) * Math.PI) / 180) * distance) + 500;
+    Math.round(Math.cos(((angle + offset) * Math.PI) / 180) * distance) +
+    centerX;
   const y =
-    Math.round(Math.sin(((angle + offset) * Math.PI) / 180) * distance) + 400;
+    Math.round(Math.sin(((angle + offset) * Math.PI) / 180) * distance) +
+    centerY;
 
   return { x, y };
 }
 
-const createNodes = () => {
+const createNodes = (centerX: number, centerY: number) => {
   const temp: NodeType[] = [];
-  for (let index = 0; index < amount; index++) {
-    const { x, y } = calculatePointOnOrbit(60 * index, 250, 0);
+  for (let index = 0; index < nodesOuter; index++) {
+    const { x, y } = calculatePointOnOrbit(
+      60 * index,
+      Math.min(centerX, centerY) * orbitRadii[2],
+      0,
+      centerX,
+      centerY
+    );
     temp.push({
       x,
       y,
       r: 50,
       strokeWidth: 0,
+      orbit: 2,
+    });
+  }
+  for (let index = 0; index < nodesMiddle; index++) {
+    const { x, y } = calculatePointOnOrbit(
+      40 * index,
+      Math.min(centerX, centerY) * orbitRadii[1],
+      0,
+      centerX,
+      centerY
+    );
+    temp.push({
+      x,
+      y,
+      r: 40,
+      strokeWidth: 0,
+      orbit: 1,
+    });
+  }
+  for (let index = 0; index < nodesCenter; index++) {
+    const { x, y } = calculatePointOnOrbit(
+      80 * index,
+      Math.min(centerX, centerY) * orbitRadii[0],
+      0,
+      centerX,
+      centerY
+    );
+    temp.push({
+      x,
+      y,
+      r: 20,
+      strokeWidth: 0,
+      orbit: 0,
     });
   }
   return temp;
@@ -54,31 +112,73 @@ const createEdges = (nodes: NodeType[]) => {
   return temp;
 };
 
-const calculatedNodes = createNodes();
-const calculatedEdges = createEdges(calculatedNodes);
+const createOrbii = (centerX: number, centerY: number): OrbitType[] => {
+  return orbitRadii.map((o, i) => ({
+    centerX,
+    centerY,
+    orbit: i,
+    r: Math.min(centerX, centerY) * orbitRadii[i],
+  }));
+};
 
 const Home: NextPage = () => {
-  const [nodes, setNodes] = useState<NodeType[]>(calculatedNodes);
-  const [edges, setEdges] = useState<EdgeType[]>(calculatedEdges);
+  const [nodes, setNodes] = useState<NodeType[]>([]);
+  const [edges, setEdges] = useState<EdgeType[]>([]);
+  const [orbii, setOrbii] = useState<OrbitType[]>([]);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const dimensions = useResizeObserver(wrapperRef);
+  const height = dimensions?.height || 1;
+  const width = dimensions?.width || 0;
+  const centerX = width / 2;
+  const centerY = height / 2;
+  useLayoutEffect(() => {
+    if (!dimensions) return;
+    console.log("d", dimensions);
+    const calculatedNodes = createNodes(centerX, centerY);
+    const calculatedEdges = createEdges(calculatedNodes);
+    const calculatedOrbii = createOrbii(centerX, centerY);
+    setNodes(calculatedNodes);
+    setEdges(calculatedEdges);
+    setOrbii(calculatedOrbii);
+  }, [dimensions, centerX, centerY]);
 
   const moveNodes = () => {
     let temp: NodeType[] = [];
-    for (let index = 0; index < amount; index++) {
-      const { x, y } = calculatePointOnOrbit(30 * index, 400, 40);
+    for (let index = 0; index < nodes.length; index++) {
+      const node = nodes[index];
+      const { x, y } = calculatePointOnOrbit(
+        50 * index,
+        Math.min(centerX, centerY) * orbitRadii[node.orbit + 1],
+        10,
+        centerX,
+        centerY
+      );
       temp.push({
+        ...node,
         x,
         y,
-        r: 80,
+        r: node.r + 20,
         strokeWidth: 4,
       });
     }
     setNodes(temp);
     setEdges(createEdges(temp));
+    setOrbii(
+      orbii.map((o, i) => ({
+        ...o,
+        r: Math.min(centerX, centerY) * orbitRadii[o.orbit + 1],
+      }))
+    );
   };
 
   return (
-    <div id="app">
+    <div id="app" ref={wrapperRef}>
       <svg>
+        {orbii.map((o, i) => {
+          return <Orbit key={i} {...o} />;
+        })}
         {edges.map((e, i) => {
           return <Edge key={i} {...e} />;
         })}

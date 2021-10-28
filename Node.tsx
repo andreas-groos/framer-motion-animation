@@ -23,11 +23,11 @@ export default function Node({
   });
   const cr = useMotionValue(r);
   const sr = useSpring(cr, {
-    duration: 3500,
+    duration: 2000,
   });
   const width = useMotionValue(strokeWidth);
   const sWidth = useSpring(width, {
-    duration: 5000,
+    duration: 2000,
   });
 
   useEffect(() => {
