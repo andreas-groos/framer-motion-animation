@@ -4,21 +4,21 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 const duration = 2000;
 export default function Edge({ source, target }: EdgeType): ReactElement {
-  const x1 = useMotionValue(source.x);
-  const sx1 = useSpring(x1, { duration });
-  const x2 = useMotionValue(target.x);
-  const sx2 = useSpring(x2, { duration });
-  const y1 = useMotionValue(source.y);
-  const sy1 = useSpring(y1, { duration });
-  const y2 = useMotionValue(target.y);
-  const sy2 = useSpring(y2, { duration });
+  const mx1 = useMotionValue(source.x);
+  const sx1 = useSpring(mx1, { duration });
+  const mx2 = useMotionValue(target.x);
+  const sx2 = useSpring(mx2, { duration });
+  const my1 = useMotionValue(source.y);
+  const sy1 = useSpring(my1, { duration });
+  const my2 = useMotionValue(target.y);
+  const sy2 = useSpring(my2, { duration });
 
   useEffect(() => {
-    x1.set(source.x);
-    x2.set(target.x);
-    y1.set(source.y);
-    y2.set(target.y);
-  }, [x1, x2, y1, y2, source, target]);
+    mx1.set(source.x);
+    mx2.set(target.x);
+    my1.set(source.y);
+    my2.set(target.y);
+  }, [mx1, mx2, my1, my2, source, target]);
 
   console.log("rendering Edge");
   return (
