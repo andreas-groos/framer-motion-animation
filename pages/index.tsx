@@ -2,6 +2,8 @@ import type { NextPage } from "next";
 import { useState, useRef, useLayoutEffect } from "react";
 import Head from "next/head";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { FPSStats } from "fps-react";
+
 import Node from "../Node";
 import Edge from "../Edge";
 import Orbit from "../Orbit";
@@ -175,6 +177,7 @@ const Home: NextPage = () => {
 
   return (
     <div id="app" ref={wrapperRef}>
+      <FPSStats />
       <svg>
         {orbii.map((o, i) => {
           return <Orbit key={i} {...o} />;
