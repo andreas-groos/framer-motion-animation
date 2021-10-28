@@ -1366,6 +1366,11 @@ foreach@^2.0.5:
   resolved "https://registry.yarnpkg.com/foreach/-/foreach-2.0.5.tgz#0bee005018aeb260d0a3af3ae658dd0136ec1b99"
   integrity sha1-C+4AUBiusmDQo6865ljdATbsG5k=
 
+fps-react@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/fps-react/-/fps-react-0.1.6.tgz#f21cf3c0e62c26e57c8c61205dc6bc2f1dcd2d5f"
+  integrity sha512-HayBJoTzNgH1dtvfe+CZmnXziW7BpWot+dKvilp6czGT6g/A4VGzChMuaOTrt8wo/xtoWx4KlCsIXy9Z0MLgdg==
+
 framer-motion@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-5.0.0.tgz#8d40edd1c04f3aa5d984e30c31551dc12504ba02"
